@@ -25,6 +25,7 @@
                 <sheet>
                     <group>
                         <field name="name"/>
+                        <filed name="allowed_all_models" />
                         <field name="model_id"/>
                     </group>
 

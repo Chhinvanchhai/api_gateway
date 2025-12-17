@@ -58,7 +58,7 @@
   </record>
 
   <menuitem id="menu_api_gateway_root"
-    name="API Gateway Mobile v3"
+    name="API Gateway"
     parent="base.menu_administration"
     groups="base.group_system" />
 

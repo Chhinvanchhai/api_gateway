@@ -89,19 +89,15 @@ class BaseApi(http.Controller):
 
     
     def response_ok(self, data, type= "http"):
-        if type == "json":
-            return data
-        return request.make_response(json.dumps(data), headers=[("Content-Type","application/json")])
+        return request.make_json_response(data, headers=[("Content-Type","application/json")])
 
     def response_401(self, message="Unauthorized"):
-        return request.make_response(
-            json.dumps({"error": "Unauthorized", "status": 401, "message": message}), 
+        return request.make_json_response({"error": "Unauthorized", "status": 401, "message": message}, 
             headers=[("Content-Type","application/json")], 
             status=401
         )
     def response_400(self, message="Bad Request"):
-        return request.make_response(
-            json.dumps({"error": "Bad Request", "status": 400, "message": message}), 
+        return request.make_json_response({"error": "Bad Request", "status": 400, "message": message}, 
             headers=[("Content-Type","application/json")], 
             status=400
         )

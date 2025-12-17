@@ -1,0 +1,30 @@
+<odoo>
+    <!-- Default Role -->
+    <data noupdate="1" >
+        <record id="api_role_only_read" model="api.role">
+            <field name="name">Only Read</field>
+            <field name="code">default</field>
+            <field name="can_read">1</field>
+            <field name="can_create">0</field>
+            <field name="can_write">0</field>
+            <field name="can_unlink">0</field>
+        </record>
+        <record id="api_role_only_write" model="api.role">
+            <field name="name">Not allow delete</field>
+            <field name="code">default</field>
+            <field name="can_read">1</field>
+            <field name="can_create">1</field>
+            <field name="can_write">1</field>
+            <field name="can_unlink">0</field>
+        </record>
+
+        <record id="api_role_all_option" model="api.role">
+            <field name="name">All options</field>
+            <field name="code">default</field>
+            <field name="can_read">1</field>
+            <field name="can_create">1</field>
+            <field name="can_write">1</field>
+            <field name="can_unlink">1</field>
+        </record>
+    </data>
+</odoo>

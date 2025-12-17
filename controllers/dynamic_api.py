@@ -34,9 +34,32 @@ class DynamicModelApi(BaseApi):
             page = max(int(page), 1)
             limit = min(int(limit), 100)
             offset = (page - 1) * limit
+            
+            # Build domain from query params
+            domain = []
+            args = request.httprequest.args  # MultiDict
+            domain_fields = args.getlist("domain_field")
+            domain_ops = args.getlist("domain_operator")
+            domain_vals = args.getlist("domain_value")
 
-            total = Model.search_count([])
-            records = Model.search([], offset=offset, limit=limit)
+            for f, op, v in zip(domain_fields, domain_ops, domain_vals):
+                # Convert "true"/"false" to boolean, numbers to int/float
+                if v.lower() == "true":
+                    v = True
+                elif v.lower() == "false":
+                    v = False
+                else:
+                    try:
+                        v = int(v)
+                    except ValueError:
+                        try:
+                            v = float(v)
+                        except ValueError:
+                            pass  # leave as string
+                domain.append((f, op, v))
+
+            total = Model.search_count(domain)
+            records = Model.search(domain, offset=offset, limit=limit)
             data = records.read(fields)
 
             return self.response_ok({

@@ -6,6 +6,7 @@ class ApiRole(models.Model):
 
     name = fields.Char(required=True)
     code = fields.Char(required=True, help="Unique code for the API role")
+    allowed_all_models = fields.Boolean(default=False, help="If checked, this role applies to all models")
     model_id = fields.Many2one(
         "ir.model",
         string="Model",

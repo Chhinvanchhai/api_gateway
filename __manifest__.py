@@ -8,7 +8,9 @@
     "data": [
         "security/ir.model.access.csv",
         "views/api_role_views.xml",
-        "views/api_gateway_views.xml"
+        "views/api_gateway_views.xml",
+        # data,
+        "data/default_data.xml"
     ],
     "installable": True
 }
