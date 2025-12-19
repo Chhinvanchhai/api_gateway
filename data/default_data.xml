@@ -26,5 +26,14 @@
             <field name="can_write">1</field>
             <field name="can_unlink">1</field>
         </record>
+
+        <record id="api_role_all_default_user_role" model="api.role">
+            <field name="name">Defaul User Role</field>
+            <field name="code">default_user</field>
+            <field name="can_read">1</field>
+            <field name="can_create">1</field>
+            <field name="can_write">1</field>
+            <field name="can_unlink">0</field>
+        </record>
     </data>
 </odoo>

@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
-                <field name="model_id"/>
+                <field name="code" />
                 <field name="can_read"/>
                 <field name="can_create"/>
                 <field name="can_write"/>
@@ -26,7 +26,8 @@
                     <group>
                         <field name="name"/>
                         <filed name="allowed_all_models" />
-                        <field name="model_id"/>
+                        <field name="model_ids" widget="many2many_tags"/>
+                        <field name="code" />
                     </group>
 
                     <group string="Permissions" col="4">

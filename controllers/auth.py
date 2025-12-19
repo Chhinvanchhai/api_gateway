@@ -8,7 +8,7 @@ from functools import wraps
 SECRET = "CHANGE_ME"
 from .decorators import require_auth 
 from .base_api import BaseApi
-from .helpers import get_request_data
+from .helpers import get_request_data, get_api_config
 
 
 class AuthApi(BaseApi):
@@ -33,7 +33,12 @@ class AuthApi(BaseApi):
 
             uid = auth_info["uid"]
             user = request.env["res.users"].sudo().browse(uid)
-            exp = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+
+            # Fetch config
+            config = get_api_config()
+
+            # JWT expiry from config
+            exp = datetime.datetime.utcnow() + datetime.timedelta(minutes=config.jwt_access_expire)
             access_token = api_jwt.encode(
                 {"uid": uid, "exp": exp},
                 SECRET,
@@ -44,36 +49,50 @@ class AuthApi(BaseApi):
                 SECRET,
                 algorithm="HS256"
             )
-            token = request.env["api.token"].sudo().search([("user_id", "=", uid)], limit=1)
-            if not token:
-                request.env["api.token"].sudo().create({
+
+            # Use default role from config
+            existing_tokens = request.env["api.token"].sudo().search([("user_id", "=", uid)], limit=1)
+
+            if existing_tokens and config.allow_multiple_tokens:
+                # Create a new token
+                token = request.env["api.token"].sudo().create({
                     "user_id": uid,
+                    "role_ids": [(6, 0, [config.default_api_role_id.id])],
                     "access_token": access_token,
                     "refresh_token": refresh_token,
                     "expire_at": exp,
                     "active": True
                 })
-            else: 
+            else:
+                # Update the existing token (or the deactivated one)
+                token = existing_tokens[:1]  # pick first one
+                # Merge default role with existing roles
+                existing_role_ids = token.role_ids.ids
+                if config.default_api_role_id.id not in existing_role_ids:
+                    existing_role_ids.append(config.default_api_role_id.id)
+
                 token.write({
                     "access_token": access_token,
                     "refresh_token": refresh_token,
                     "expire_at": exp,
-                    "active": True
+                    "active": True,
+                    "role_ids": [(6, 0, existing_role_ids)]  # assign all roles back
                 })
+
+
+
             response = {
                 "status": 200,
                 "result": {
                     "access_token": access_token,
                     "refresh_token": refresh_token,
-                    "expires_in": 1800,
+                    "expires_in": config.jwt_access_expire * 60,  # in seconds
                 }
-              
             }
             return self.response_ok(response)
 
         except Exception as e:
             return self.response_error(str(e), 500)
-
 
 
     @http.route(f"{API_PREFIX}/refresh", type="http", auth="none", methods=["POST"], csrf=False)
@@ -93,21 +112,27 @@ class AuthApi(BaseApi):
             if not token:
                 return {"error": "Token revoked"}
 
+            # Fetch config
+            config = get_api_config()
             new_payload = {
                 "uid": payload["uid"],
-                "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+                "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=config.jwt_access_expire)
             }
             new_access = api_jwt.encode(new_payload, SECRET, algorithm="HS256")
-            token.access_token = new_access
-            token.expire_at = new_payload["exp"]
+            token.write({
+                "access_token": new_access,
+                "expire_at": new_payload["exp"]
+            })
 
             response = {
                 "status": 200,
                 "result": {
-                    "access_token": new_access, "expires_in": 1800
-                }    
-            } # HOUR
+                    "access_token": new_access,
+                    "expires_in": config.jwt_access_expire * 60
+                }
+            }
             return self.response_ok(response)
         except Exception as e:
-            return self.response_error(e)
+            return self.response_error(str(e), 500)
+
 

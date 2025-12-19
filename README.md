@@ -102,3 +102,80 @@ Respond data:
         "id": null,
         "result": "<_Response 10 bytes [200 OK]>"
     }
+
+```
+## Get Domain Domain Filter Example
+
+```
+1️⃣ JSON-BASED DOMAIN (✅ RECOMMENDED)
+➤ OR condition
+http://localhost:8069/api/v1/models/res.users
+?domain=[["login","=","admin"],"|",["active","=",true],["share","=",false]]
+&page=1
+&limit=20
+
+
+➡️ Domain built:
+
+["|", ("login", "=", "admin"), ("active", "=", True), ("share", "=", False)]
+
+2️⃣ CSV DOMAIN WITH LOGICAL OPERATOR |
+➤ name ILIKE "john" OR active = true
+http://localhost:8069/api/v1/models/res.users
+?domain_field=name,active
+&domain_operator=ilike,=
+&domain_value=john,true
+&domain_logic=|
+&page=1
+&limit=10
+
+
+➡️ Domain built:
+
+["|", ("name", "ilike", "john"), ("active", "=", True)]
+
+3️⃣ CSV DOMAIN WITH AND (&)
+➤ internal users AND active
+http://localhost:8069/api/v1/models/res.users
+?domain_field=share,active
+&domain_operator==,=
+&domain_value=false,true
+&domain_logic=&
+
+
+➡️ Domain built:
+
+["&", ("share", "=", False), ("active", "=", True)]
+
+4️⃣ IN OPERATOR WITH LIST VALUES
+➤ multiple logins
+http://localhost:8069/api/v1/models/res.users
+?domain_field=login
+&domain_operator=in
+&domain_value=admin|demo|test
+
+
+➡️ Domain built:
+
+[("login", "in", ["admin", "demo", "test"])]
+
+5️⃣ MIX: IN + AND LOGIC
+http://localhost:8069/api/v1/models/res.users
+?domain_field=login,active
+&domain_operator=in,=
+&domain_value=admin|demo,true
+&domain_logic=&
+
+
+➡️ Domain built:
+
+["&", ("login", "in", ["admin", "demo"]), ("active", "=", True)]
+
+6️⃣ NO DOMAIN (ALL USERS)
+http://localhost:8069/api/v1/models/res.users?page=1&limit=50
+
+
+➡️ Domain built:
+
+[]
+```

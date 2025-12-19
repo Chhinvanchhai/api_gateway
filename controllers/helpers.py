@@ -4,27 +4,51 @@ import ipaddress
 
 def get_request_data():
     """
-    Safely extract request data for type='http' routes.
+    Extract request data for type='http' routes.
 
     Supports:
     - application/json
     - application/x-www-form-urlencoded
-    - query parameters
+    - multipart/form-data (files + fields)
+    - query params
     """
     req = request.httprequest
+    data = {}
 
+    # --------------------
     # JSON body
+    # --------------------
     if req.content_type and "application/json" in req.content_type:
         try:
             return json.loads(req.data.decode("utf-8") or "{}")
-        except json.JSONDecodeError:
+        except Exception:
             return {}
 
-    # Form data
+    # --------------------
+    # multipart/form-data
+    # --------------------
+    if req.content_type and "multipart/form-data" in req.content_type:
+        # normal fields
+        data.update(req.form.to_dict())
+
+        # files
+        for field, file in req.files.items():
+            data[field] = {
+                "filename": file.filename,
+                "content": base64.b64encode(file.read()).decode("utf-8"),
+                "mimetype": file.mimetype,
+            }
+        return data
+
+    # --------------------
+    # application/x-www-form-urlencoded
+    # --------------------
     if req.form:
         return req.form.to_dict()
 
-    # Query params (?a=1&b=2)
+    # --------------------
+    # query params
+    # --------------------
     return request.params
 
 
@@ -81,3 +105,14 @@ def is_domain_allowed(domain, allowed_domains):
             return True
 
     return False
+
+
+def get_api_config():
+    """Return the singleton API config"""
+    config = request.env["api.config"].sudo().search([("active","=",True)], limit=1)
+    if not config:
+        # auto-create default if missing
+        config = request.env["api.config"].sudo().create({"name": "Default API Config"})
+    return config
+
+

@@ -1,0 +1,356 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Odoo  API Gateway",
+    "version": "1.0.0",
+    "description": "API to dynamically CRUD Odoo models."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8069",
+      "description": "Local Odoo server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    { "BearerAuth": [] }
+  ],
+  "paths": {
+    "/api/v1/auth/login": {
+      "post": {
+        "summary": "Login and get JWT access/refresh tokens",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "login": { "type": "string", "example": "admin@example.com" },
+                  "password": { "type": "string", "example": "admin" }
+                },
+                "required": ["login", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful, returns access and refresh tokens",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "integer", "example": 200 },
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "access_token": { "type": "string" },
+                        "refresh_token": { "type": "string" },
+                        "expires_in": { "type": "integer", "description": "Seconds until token expires" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing login or password" },
+          "401": { "description": "Invalid credentials" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "summary": "Refresh JWT access token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "refresh_token": { "type": "string" }
+                },
+                "required": ["refresh_token"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns new access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "integer", "example": 200 },
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "access_token": { "type": "string" },
+                        "expires_in": { "type": "integer" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid payload" },
+          "401": { "description": "Invalid refresh token" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/api/v1/models/{model}": {
+      "get": {
+        "summary": "Get records from a model",
+        "description": "Retrieve records from any Odoo model with pagination, dynamic fields, domain filters, and optional relational field expansion.<br/> Example: /api/v1/models/res.users?fields=id,name,login,partner_id,company_id&expand=true&partner_id=id,name,email,phone,mobile&domain_field=active&domain_operator==&domain_value=true&page=1&limit=10",
+        "parameters": [
+          {
+            "name": "model",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Odoo model name (e.g., res.users, res.partner)"
+          },
+      
+          {
+            "name": "page",
+            "in": "query",
+            "schema": { "type": "integer", "default": 1, "minimum": 1 },
+            "description": "Page number"
+          },
+      
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": { "type": "integer", "default": 20, "maximum": 100 },
+            "description": "Number of records per page"
+          },
+      
+          {
+            "name": "fields",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Comma-separated list of fields to return (e.g., id,name,partner_id,company_id)"
+          },
+      
+          {
+            "name": "expand",
+            "in": "query",
+            "schema": {
+              "oneOf": [
+                { "type": "boolean" },
+                { "type": "string" }
+              ]
+            },
+            "description": "Expand relational fields. Use `true` to expand all relational fields included in `fields`, or specify relations explicitly (e.g., partner_id,company_id)."
+          },
+      
+          {
+            "name": "partner_id",
+            "in": "query",
+            "schema": { "type": "string" },
+            "style": "form",
+            "explode": false,
+            "description": "Comma-separated list of sub-fields for partner_id when expanded (e.g., id,name,email,phone,mobile)"
+          }
+      ,
+      {
+        "name": "company_id",
+        "in": "query",
+        "schema": { "type": "string" },
+        "style": "form",
+        "explode": false,
+        "description": "Comma-separated list of sub-fields for company_id when expanded (e.g., id,name)"
+      },
+          {
+            "name": "domain_field",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "style": "form",
+            "explode": true,
+            "description": "Field names for domain filtering"
+          },
+      
+          {
+            "name": "domain_operator",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "style": "form",
+            "explode": true,
+            "description": "Operators for domain filtering (e.g., '=', 'ilike', 'in')"
+          },
+      
+          {
+            "name": "domain_value",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "style": "form",
+            "explode": true,
+            "description": "Values for domain filtering"
+          }
+        ],
+      
+        "responses": {
+          "200": {
+            "description": "List of records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "model": { "type": "string" },
+                    "status": { "type": "integer", "example": 200 },
+                    "page": { "type": "integer" },
+                    "limit": { "type": "integer" },
+                    "total": { "type": "integer" },
+                    "result": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+      
+          "403": {
+            "description": "Forbidden – insufficient permissions"
+          },
+      
+          "404": {
+            "description": "Model not found"
+          },
+      
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+      ,
+      "post": {
+        "summary": "Create a record in a model",
+        "parameters": [
+          { "name": "model", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "type": "object", "description": "JSON object of field values" } }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Record created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "id": { "type": "integer" }, "status": { "type": "integer" } }
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid or missing payload" },
+          "404": { "description": "Model not found" },
+          "403": { "description": "Forbidden" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/api/v1/models/{model}/{record_id}": {
+      "put": {
+        "summary": "Update a record",
+        "parameters": [
+          { "name": "model", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "record_id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "type": "object", "description": "Fields to update" } }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Record updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer" },
+                    "message": { "type": "string" },
+                    "status": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid payload" },
+          "404": { "description": "Model or record not found" },
+          "403": { "description": "Forbidden" },
+          "500": { "description": "Server error" }
+        }
+      },
+      "patch": {
+        "summary": "Alias for PUT (update record)",
+        "parameters": [
+          { "$ref": "#/paths//api/v1/models/{model}/{record_id}/put/parameters/0" },
+          { "$ref": "#/paths//api/v1/models/{model}/{record_id}/put/parameters/1" }
+        ],
+        "requestBody": { "$ref": "#/paths//api/v1/models/{model}/{record_id}/put/requestBody" },
+        "responses": { "$ref": "#/paths//api/v1/models/{model}/{record_id}/put/responses" }
+      },
+      "delete": {
+        "summary": "Delete a record",
+        "parameters": [
+          { "name": "model", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "record_id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Record deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "id": { "type": "integer" }, "deleted": { "type": "boolean" } }
+                }
+              }
+            }
+          },
+          "404": { "description": "Model or record not found" },
+          "403": { "description": "Forbidden" },
+          "500": { "description": "Server error" }
+        }
+      }
+    }
+  }
+}

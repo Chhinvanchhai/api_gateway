@@ -8,23 +8,23 @@
       <form>
         <sheet>
           <group>
-            <field name="user_id"/>
-            <field name="active"/>
-            <field name="expire_at"/>
+            <field name="user_id" />
+            <field name="active" />
+            <field name="expire_at" />
           </group>
 
           <group string="Roles">
-              <field name="is_superuser"/>
-              <field invisible="is_superuser" name="role_ids" widget="many2many_tags"/>
+            <field name="is_superuser" />
+            <field invisible="is_superuser" name="role_ids" widget="many2many_tags" />
           </group>
 
           <group string="Allow Request">
-              <field name="allowed_ips" />
-              <field name="allowed_domains" />
+            <field name="allowed_ips" />
+            <field name="allowed_domains" />
           </group>
 
           <group string="Tokens">
-            <field name="access_token"  readonly="1" />
+            <field name="access_token" readonly="1" />
             <field name="refresh_token" readonly="1" />
           </group>
 
@@ -38,12 +38,53 @@
     <field name="model">api.token</field>
     <field name="arch" type="xml">
       <list>
-        <field name="user_id"/>
-        <field name="expire_at"/>
-        <field name="active"/>
+        <field name="user_id" />
+        <field name="expire_at" />
+        <field name="active" />
       </list>
     </field>
   </record>
+
+  <record id="view_api_config_form" model="ir.ui.view">
+    <field name="name">api.config.form</field>
+    <field name="model">api.config</field>
+    <field name="arch" type="xml">
+      <form string="API Gateway Configuration">
+        <sheet>
+          <group>
+            <field name="name" />
+            <field name="active"/>
+            <field name="api_enabled" />
+            <field name="allow_multiple_tokens" />
+          </group>
+          <group string="JWT Settings">
+            <field name="jwt_access_expire" />
+            <field name="jwt_refresh_expire" />
+          </group>
+          <group string="Default Role">
+            <field name="default_api_role_id" options="{'no_create': True}" />
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="view_api_config_list" model="ir.ui.view">
+    <field name="name">api.config.list</field>
+    <field name="model">api.config</field>
+    <field name="arch" type="xml">
+        <list string="API Configurations">
+            <field name="name"/>
+            <field name="api_enabled"/>
+            <field name="jwt_access_expire"/>
+            <field name="jwt_refresh_expire"/>
+            <field name="default_api_role_id"/>
+            <field name="allow_multiple_tokens"/>
+            <field name="active"/>
+        </list>
+    </field>
+</record>
+
+  <!-- action window -->
 
   <record id="action_api_token" model="ir.actions.act_window">
     <field name="name">API Tokens</field>
@@ -56,6 +97,17 @@
     <field name="res_model">api.role</field>
     <field name="view_mode">list,form</field>
   </record>
+
+
+  <record id="action_api_config" model="ir.actions.act_window">
+      <field name="name">API Gateway Config</field>
+      <field name="res_model">api.config</field>
+      <field name="view_mode">list,form</field>
+      <field name="view_id" ref="view_api_config_list"/>
+      <field name="target">current</field>
+  </record>
+
+
 
   <menuitem id="menu_api_gateway_root"
     name="API Gateway"
@@ -74,5 +126,11 @@
     parent="menu_api_gateway_root"
     action="action_api_role"
     groups="base.group_system" />
+
+  <menuitem id="menu_api_gateway_config"
+    name="Configuration"
+    parent="menu_api_gateway_root"
+    action="action_api_config"
+    sequence="90" />
 
 </odoo>
