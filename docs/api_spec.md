@@ -13,4 +13,4 @@
 - name (employees)
 
 ## Swagger
-- GET /api/docs/openapi.json
+- GET /api_gateway/docs/openapi.json

@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 
 class BaseApi(http.Controller):
     
-    @http.route('/api/v1/health', type='http', auth='none', methods=['get'], csrf=False)
+    @http.route('/api_gateway/v1/health', type='http', auth='none', methods=['get'], csrf=False)
     def health(self):
         return self.response_ok({"status": "ok", "message": "API Gateway ready"})
 

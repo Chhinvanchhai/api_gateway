@@ -13,7 +13,7 @@ from .base_api import BaseApi
 
 class EmployeeApi(BaseApi):
 
-    @http.route("/api/v1/employees", type="http", auth="none", methods=["GET"], csrf=False)
+    @http.route("/api_gateway/v1/employees", type="http", auth="none", methods=["GET"], csrf=False)
     @require_auth(scope="employees:read")  
     def employees(self, page=1, limit=20, name=None):
         try: 
@@ -50,15 +50,15 @@ class EmployeeApi(BaseApi):
         except Exception as e:
             return self.response_error(e)
 
-    @http.route("/api/docs/openapi.json", type="http", auth="none", methods=["GET"], csrf=False)
+    @http.route("/api_gateway/docs/openapi.json", type="http", auth="none", methods=["GET"], csrf=False)
     def openapi(self):
         spec = {
             "openapi": "3.0.0",
             "info": {"title": "Odoo Mobile API", "version": "1.0"},
             "paths": {
-                "/api/v1/login": {"post": {"summary": "Login"}},
-                "/api/v1/refresh": {"post": {"summary": "Refresh token"}},
-                "/api/v1/employees": {"post": {"summary": "List employees"}}
+                "/api_gateway/v1/login": {"post": {"summary": "Login"}},
+                "/api_gateway/v1/refresh": {"post": {"summary": "Refresh token"}},
+                "/api_gateway/v1/employees": {"post": {"summary": "List employees"}}
             }
         }
         return self.response_ok(spec)

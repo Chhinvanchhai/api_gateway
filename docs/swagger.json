@@ -26,7 +26,7 @@
     }
   ],
   "paths": {
-    "/api/v1/auth/login": {
+    "/api_gateway/v1/auth/login": {
       "post": {
         "summary": "Login and get JWT access/refresh tokens",
         "requestBody": {
@@ -97,7 +97,7 @@
         }
       }
     },
-    "/api/v1/auth/refresh": {
+    "/api_gateway/v1/auth/refresh": {
       "post": {
         "summary": "Refresh JWT access token",
         "requestBody": {
@@ -158,10 +158,10 @@
         }
       }
     },
-    "/api/v1/models/{model}": {
+    "/api_gateway/v1/models/{model}": {
       "get": {
         "summary": "Get records from a model",
-        "description": "Retrieve records from any Odoo model with pagination, dynamic fields, domain filters, and optional relational field expansion.<br/> Example: /api/v1/models/res.users?fields=id,name,login,partner_id,company_id&expand=true&partner_id=id,name,email,phone,mobile&domain_field=active&domain_operator==&domain_value=true&page=1&limit=10",
+        "description": "Retrieve records from any Odoo model with pagination, dynamic fields, domain filters, and optional relational field expansion.<br/> Example: /api_gateway/v1/models/res.users?fields=id,name,login,partner_id,company_id&expand=true&partner_id=id,name,email,phone,mobile&domain_field=active&domain_operator==&domain_value=true&page=1&limit=10",
         "parameters": [
           {
             "name": "model",
@@ -379,7 +379,7 @@
         }
       }
     },
-    "/api/v1/models/{model}/{record_id}": {
+    "/api_gateway/v1/models/{model}/{record_id}": {
       "put": {
         "summary": "Update a record",
         "parameters": [
@@ -451,17 +451,17 @@
         "summary": "Alias for PUT (update record)",
         "parameters": [
           {
-            "$ref": "#/paths//api/v1/models/{model}/{record_id}/put/parameters/0"
+            "$ref": "#/paths//api_gateway/v1/models/{model}/{record_id}/put/parameters/0"
           },
           {
-            "$ref": "#/paths//api/v1/models/{model}/{record_id}/put/parameters/1"
+            "$ref": "#/paths//api_gateway/v1/models/{model}/{record_id}/put/parameters/1"
           }
         ],
         "requestBody": {
-          "$ref": "#/paths//api/v1/models/{model}/{record_id}/put/requestBody"
+          "$ref": "#/paths//api_gateway/v1/models/{model}/{record_id}/put/requestBody"
         },
         "responses": {
-          "$ref": "#/paths//api/v1/models/{model}/{record_id}/put/responses"
+          "$ref": "#/paths//api_gateway/v1/models/{model}/{record_id}/put/responses"
         }
       },
       "delete": {
@@ -515,7 +515,7 @@
         }
       }
     },
-    "/api/v1/models/{model}/{record_id}/attachment": {
+    "/api_gateway/v1/models/{model}/{record_id}/attachment": {
       "post": {
         "summary": "Add attachment to a record",
         "tags": [

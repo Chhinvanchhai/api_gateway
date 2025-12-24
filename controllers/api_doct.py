@@ -6,7 +6,7 @@ from odoo.modules import get_module_path  # <-- correct import
 
 class APIDocs(http.Controller):
 
-    @http.route('/api/v1/docs', type='http', auth='none', website=True)
+    @http.route('/api_gateway/v1/docs', type='http', auth='none', website=True)
     def swagger_ui(self):
         return """
         <!DOCTYPE html>
@@ -20,7 +20,7 @@ class APIDocs(http.Controller):
             <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui-bundle.js"></script>
             <script>
                 const ui = SwaggerUIBundle({
-                    url: '/api/v1/swagger.json',
+                    url: '/api_gateway/v1/swagger.json',
                     dom_id: '#swagger-ui',
                 });
             </script>
@@ -28,7 +28,7 @@ class APIDocs(http.Controller):
         </html>
         """
 
-    @http.route('/api/v1/swagger.json', type='http', auth='none', website=True)
+    @http.route('/api_gateway/v1/swagger.json', type='http', auth='none', website=True)
     def swagger_json(self):
         """Serve swagger.json with dynamic server URL"""
         module_path = get_module_path('api_gateway')

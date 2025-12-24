@@ -11,7 +11,7 @@ class DynamicModelApi(BaseApi):
 
     # ---------------- GET ----------------
     @http.route(
-        "/api/v1/models/<string:model>/<int:record_id>",
+        "/api_gateway/v1/models/<string:model>/<int:record_id>",
         type="http",
         auth="none",
         methods=["GET"],
@@ -60,7 +60,7 @@ class DynamicModelApi(BaseApi):
 
 
     @http.route(
-        "/api/v1/models/<string:model>",
+        "/api_gateway/v1/models/<string:model>",
         type="http",
         auth="none",
         methods=["GET"],
@@ -140,7 +140,7 @@ class DynamicModelApi(BaseApi):
 
     # ---------------- POST (Create) ----------------
     @http.route(
-        "/api/v1/models/<string:model>",
+        "/api_gateway/v1/models/<string:model>",
         type="http",
         auth="none",
         methods=["POST"],
@@ -168,7 +168,7 @@ class DynamicModelApi(BaseApi):
 
     # ---------------- PUT/PATCH (Update) ----------------
     @http.route(
-        "/api/v1/models/<string:model>/<int:record_id>",
+        "/api_gateway/v1/models/<string:model>/<int:record_id>",
         type="http",
         auth="none",
         methods=["PUT", "PATCH"],
@@ -200,7 +200,7 @@ class DynamicModelApi(BaseApi):
 
     # ---------------- DELETE ----------------
     @http.route(
-        "/api/v1/models/<string:model>/<int:record_id>",
+        "/api_gateway/v1/models/<string:model>/<int:record_id>",
         type="http",
         auth="none",
         methods=["DELETE"],
@@ -228,7 +228,7 @@ class DynamicModelApi(BaseApi):
         
 
     @http.route(
-        "/api/v1/models/<string:model>/<int:record_id>/attachment",
+        "/api_gateway/v1/models/<string:model>/<int:record_id>/attachment",
         type="http",
         auth="none",
         methods=["POST"],

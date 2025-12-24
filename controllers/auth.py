@@ -12,11 +12,11 @@ from .helpers import get_request_data, get_api_config
 
 
 class AuthApi(BaseApi):
-    API_PREFIX = "/api/v1/auth"
+    API_PREFIX = "/api_gateway/v1/auth"
     
     @http.route(f"{API_PREFIX}/login", type="http", auth="none", methods=["POST"], csrf=False)
     def login(self, **kwargs):
-        try:
+        try:z
             data = get_request_data()
             login = data.get("login")
             password = data.get("password")

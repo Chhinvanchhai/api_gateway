@@ -5,7 +5,7 @@ from odoo.http import request
 class ApiFallback(http.Controller):
 
     @http.route(
-        '/api/v1/<path:subpath>',
+        '/api_gateway/v1/<path:subpath>',
         type='http',
         auth='none',
         methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
@@ -15,7 +15,7 @@ class ApiFallback(http.Controller):
         return request.make_response(
             json.dumps({
                 "error": "API endpoint not found",
-                "path": f"/api/v1/{subpath}",
+                "path": f"/api_gateway/v1/{subpath}",
                 "status": 404
             }),
             headers=[("Content-Type", "application/json")],

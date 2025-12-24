@@ -7,7 +7,7 @@
 ---
 
 ## Base URL
-http://<odoo-host>:8069/api/v1/models/
+http://<odoo-host>:8069/api_gateway/v1/models/
 
 - Replace `<odoo-host>` with your Odoo instance address.
 - Model names are Odoo technical model names, e.g., `hr.department`, `res.partner`.
@@ -27,7 +27,7 @@ http://<odoo-host>:8069/api/v1/models/
 **Example:**
 
 ```bash
-    curl -X GET "http://localhost:8069/api/v1/models/hr.department?page=1&limit=5&fields=name,manager_id"
+    curl -X GET "http://localhost:8069/api_gateway/v1/models/hr.department?page=1&limit=5&fields=name,manager_id"
 
 ```
 Respond data: 
@@ -49,7 +49,7 @@ Respond data:
 ### 2. POST — Create Record
 
 ```bash
-curl --location 'http://localhost:8069/api/v1/models/hr.department' \
+curl --location 'http://localhost:8069/api_gateway/v1/models/hr.department' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjksImV4cCI6MTc2NTk0NzE2N30.QzZV3MXje3rIzpVsEdRhgm-KbcuTtVs96E0H6DQ8hFk' \
 
@@ -80,7 +80,7 @@ Respond data:
 
 ```bash
 
-curl --location --request PUT 'http://localhost:8069/api/v1/models/hr.department/3' \
+curl --location --request PUT 'http://localhost:8069/api_gateway/v1/models/hr.department/3' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjksImV4cCI6MTc2NTk0NzE2N30.QzZV3MXje3rIzpVsEdRhgm-KbcuTtVs96E0H6DQ8hFk' \
 --data '{
@@ -109,7 +109,7 @@ Respond data:
 ```
 1️⃣ JSON-BASED DOMAIN (✅ RECOMMENDED)
 ➤ OR condition
-http://localhost:8069/api/v1/models/res.users
+http://localhost:8069/api_gateway/v1/models/res.users
 ?domain=[["login","=","admin"],"|",["active","=",true],["share","=",false]]
 &page=1
 &limit=20
@@ -121,7 +121,7 @@ http://localhost:8069/api/v1/models/res.users
 
 2️⃣ CSV DOMAIN WITH LOGICAL OPERATOR |
 ➤ name ILIKE "john" OR active = true
-http://localhost:8069/api/v1/models/res.users
+http://localhost:8069/api_gateway/v1/models/res.users
 ?domain_field=name,active
 &domain_operator=ilike,=
 &domain_value=john,true
@@ -136,7 +136,7 @@ http://localhost:8069/api/v1/models/res.users
 
 3️⃣ CSV DOMAIN WITH AND (&)
 ➤ internal users AND active
-http://localhost:8069/api/v1/models/res.users
+http://localhost:8069/api_gateway/v1/models/res.users
 ?domain_field=share,active
 &domain_operator==,=
 &domain_value=false,true
@@ -149,7 +149,7 @@ http://localhost:8069/api/v1/models/res.users
 
 4️⃣ IN OPERATOR WITH LIST VALUES
 ➤ multiple logins
-http://localhost:8069/api/v1/models/res.users
+http://localhost:8069/api_gateway/v1/models/res.users
 ?domain_field=login
 &domain_operator=in
 &domain_value=admin|demo|test
@@ -160,7 +160,7 @@ http://localhost:8069/api/v1/models/res.users
 [("login", "in", ["admin", "demo", "test"])]
 
 5️⃣ MIX: IN + AND LOGIC
-http://localhost:8069/api/v1/models/res.users
+http://localhost:8069/api_gateway/v1/models/res.users
 ?domain_field=login,active
 &domain_operator=in,=
 &domain_value=admin|demo,true
@@ -172,7 +172,7 @@ http://localhost:8069/api/v1/models/res.users
 ["&", ("login", "in", ["admin", "demo"]), ("active", "=", True)]
 
 6️⃣ NO DOMAIN (ALL USERS)
-http://localhost:8069/api/v1/models/res.users?page=1&limit=50
+http://localhost:8069/api_gateway/v1/models/res.users?page=1&limit=50
 
 
 ➡️ Domain built:
