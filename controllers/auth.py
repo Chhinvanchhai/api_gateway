@@ -16,7 +16,7 @@ class AuthApi(BaseApi):
     
     @http.route(f"{API_PREFIX}/login", type="http", auth="none", methods=["POST"], csrf=False)
     def login(self, **kwargs):
-        try:z
+        try:
             data = get_request_data()
             login = data.get("login")
             password = data.get("password")
